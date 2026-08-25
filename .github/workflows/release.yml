@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
     inputs:
       ref:
-        description: 'Git tag to build, e.g. v0.1.3. Must match the version in plugin.json.'
+        description: 'Git tag to build, e.g. v0.1.6. The tag determines the released version.'
         required: true
         type: string
 
@@ -25,6 +25,19 @@ jobs:
         with:
           fetch-depth: 0
           ref: ${{ github.event.inputs.ref || github.ref }}
+
+      # The tag is the source of truth for the released version. The build
+      # reads it from package.json (webpack substitutes %VERSION% into
+      # plugin.json), so write it here instead of committing a version bump
+      # before every release. Only the runner's checkout is modified.
+      - name: Set version from tag
+        shell: bash
+        env:
+          TAG: ${{ github.event.inputs.ref || github.ref_name }}
+        run: |
+          version="${TAG#v}"
+          echo "Releasing $version (from tag $TAG)"
+          npm version "$version" --no-git-tag-version --allow-same-version
 
       - name: Build and release plugin
         uses: grafana/plugin-actions/build-plugin@main
