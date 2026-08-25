@@ -42,6 +42,11 @@ jobs:
       - name: Build and release plugin
         uses: grafana/plugin-actions/build-plugin@main
         with:
+          # The action defaults to Node 20, which cannot load the TypeScript
+          # webpack config in .config: the ESM path rejects the .ts extension
+          # and the ts-node fallback fails on moduleResolution "bundler".
+          # Node >= 22 strips types natively, so the ESM path just works.
+          node-version: '24'
           policy_token: ${{ secrets.GRAFANA_ACCESS_POLICY_TOKEN }}
           sign_root_urls: https://grafana.myrspoven.com,https://grafana-test.myrspoven.com
           attestation: 'true'
