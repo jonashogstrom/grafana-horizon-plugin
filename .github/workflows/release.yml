@@ -23,5 +23,5 @@ jobs:
         uses: grafana/plugin-actions/build-plugin@main
         with:
           policy_token: ${{ secrets.GRAFANA_ACCESS_POLICY_TOKEN }}
-          sign_root_urls: https://grafana.myrspoven.se/,http://grafana.myrspoven.se:3000/,https://testgrafana.myrspoven.se/,http://testgrafana.myrspoven.se:3000/
+          sign_root_urls: https://grafana.myrspoven.com,https://grafana-test.myrspoven.com
           attestation: 'true'
